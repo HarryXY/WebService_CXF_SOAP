@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>use Ajax to call WebService</title>
+	<script type="text/javascript">
+		var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+
+		function sendMsg(){
+		
+		//Server 
+		var wsUrl = "http://192.168.100.107:6789/hello";
+
+		var name = document.getElementById("name").value;
+		//Request Body
+		var soap = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:q0="http://ws.xuyi.cn/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'+
+					'<soapenv:Body><q0:sayHello><arg0>'+ name +'</arg0></q0:sayHello></soapenv:Body></soapenv:Envelope>';
+
+		//open url
+		xhr.open('post',wsUrl, true);
+
+		//reset request head
+		xhr.setRequestHeader("Content-Type","text/xml;charset=UTF-8");
+
+		//set callback function
+		xhr.onreadystatechange = _back;
+
+		//send request
+		xhr.send(soap);
+		
+		}
+
+		function _back(){
+			if(xhr.readyState == 4){
+				if(xhr.status == 200){
+					var result = xhr.reponseXML;
+					console.log("_back");
+					var msg = result.getElementsByTagName('return')[0];
+					document.getElementById("showResult").innerHTML = msg.text；
+				}
+			}
+		}
+		
+	</script>
+</head>
+<body>
+	<input type="button" value="send SOAP request" id="button_1" onclick="sendMsg();"/>
+	<input type="text" id="name"/>
+	<div id="showResult">
+	</div>
+</body>
+</html>
